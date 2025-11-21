@@ -21,7 +21,7 @@ export function LoginPage() {
       await login(formData.email, formData.password);
     } else {
       if (formData.password !== formData.confirmPassword) {
-        alert("Passwords don't match");
+        alert("Passwords don&apos;t match");
         return;
       }
       await register(formData.email, formData.password, formData.name);

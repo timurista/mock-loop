@@ -727,7 +727,7 @@ export function InterviewRoomPage({ sessionId }: InterviewRoomPageProps) {
                 onClick={handleJustEnd}
                 className="w-full px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium"
               >
-                🚪 Just End (Don't Save)
+                🚪 Just End (Don&apos;t Save)
               </button>
 
               <button

@@ -338,9 +338,9 @@ async def delete_interview_session(session_id: str, db: AsyncSession = Depends(g
         # Get all available sessions for debugging
         all_sessions_result = await db.execute(select(Interview.session_id))
         available_sessions = [s[0] for s in all_sessions_result.fetchall() if s[0]]
-        
+
         raise HTTPException(
-            status_code=404, 
+            status_code=404,
             detail={
                 "message": f"Interview session '{session_id}' not found",
                 "available_sessions": available_sessions[:5],  # Limit to first 5 for debugging
