@@ -1,0 +1,12 @@
+node_modules
+.pnpm-home
+.DS_Store
+dist
+__pycache__/
+.venv
+.ruff_cache
+.pytest_cache
+frontend/.next
+frontend/out
+.env
+.env.local

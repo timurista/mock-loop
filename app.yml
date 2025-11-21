@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mockloop-backend
+  labels:
+    app: mockloop
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mockloop
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: mockloop
+        tier: backend
+    spec:
+      containers:
+        - name: backend
+          image: registry.digitalocean.com/mockloop/backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: ENVIRONMENT
+              value: "production"
+            - name: FRONTEND_ORIGIN
+              value: "https://app.mockloop.com"
+            - name: LLM_MODEL
+              value: "gpt-4o-mini"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mockloop-backend
+spec:
+  selector:
+    app: mockloop
+    tier: backend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mockloop-frontend
+  labels:
+    app: mockloop
+    tier: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mockloop
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: mockloop
+        tier: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: registry.digitalocean.com/mockloop/frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NEXT_PUBLIC_API_BASE_URL
+              value: "https://mockloop.api"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mockloop-frontend
+spec:
+  selector:
+    app: mockloop
+    tier: frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mockloop
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+    - host: app.mockloop.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mockloop-frontend
+                port:
+                  number: 80
+    - host: api.mockloop.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mockloop-backend
+                port:
+                  number: 80
